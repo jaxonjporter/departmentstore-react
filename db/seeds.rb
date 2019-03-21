@@ -12,7 +12,7 @@
     5.times do
       r = Review.create(
         title: Faker::TvShows::MichaelScott.quote,
-        body: Faker::Lorem.paragraph,
+        body: Faker::TvShows::MichaelScott.quote,
         author: Faker::FunnyName.two_word_name,
         rating: Faker::Number.between(1, 10),
         item_id: i.id
