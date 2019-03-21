@@ -8,6 +8,8 @@ import ItemView from "./components/ItemView";
 import Home from "./components/Home";
 import NoMatch from "./components/NoMatch";
 import { Container, } from "semantic-ui-react";
+import styled from "styled-components";
+
 
 const App = () => (
   <Fragment>
