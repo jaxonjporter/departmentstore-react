@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Button, Header, Segment, Card, } from "semantic-ui-react";
+import { Button, Header, Segment, Card, Icon } from "semantic-ui-react";
 
 class DepartmentView extends React.Component {
-  state = { department: {}, items: [] };
+  state = { department: {}, items: [], edit: false, };
 
   componentDidMount() {
     const dep = this.props.match.params.id
@@ -17,6 +17,18 @@ class DepartmentView extends React.Component {
         this.setState({ items: resItems.data, });
       })
   }
+
+  deleteItem = (id) => {
+    const dep = this.props.match.params.id
+    axios.delete(`/api/departments/${dep}/items/${id}`)
+    .then( res => {
+      debugger
+      const { items, } = this.state;
+      this.setState({ items: items.filter( i => i.id !== id ), })
+  })
+}
+
+  toggle = () => this.setState( {edit:!this.state.edit})
 
   renderItems = () => {
     const { items, } = this.state;
@@ -31,19 +43,25 @@ class DepartmentView extends React.Component {
           <Card.Description>
             { item.description }
           </Card.Description>
+          </Card.Content>
           <Card.Content extra>
-          <Button as={Link} to={`${item.department_id}/item/${item.id}`} color='blue'>
+          <Button as={Link} to={`${item.department_id}/items/${item.id}`} color='blue'>
             View
           </Button>
-        </Card.Content>
+          <Button icon color="red"
+            onClick={() => this.deleteItem(item.id) } 
+            style={{ marginLeft: "10px", }}>
+            <Icon name="trash" />
+          </Button>
+          <Button as={Link} to={`${item.department_id}/items/${item.id}/edit`}icon color="yellow"
+            style={{ marginLeft: "10px", }}>
+            <Icon name="edit" />
+          </Button>
         </Card.Content>
       </Card>
     ))
   }
 
-  deleteItem = (id) => {
-    axios.delete(`/api/departments/${id}`).then(this.props.history.push('/departments'))
-  }
 
   render() {
     const { name, } = this.state.department;
@@ -52,21 +70,31 @@ class DepartmentView extends React.Component {
       <div>
         <Segment>
           <Header as="h1">{ name }</Header>
+          <Button style={{position: "absolute", right: '10px', bottom: "20px", margin: 0}}
+            color="black" 
+            onClick={this.props.history.goBack}
+          >
+            Back
+          </Button>
         </Segment>
         <br />
         <br />
-        <Card.Group>
+        <br />
+        <Card.Group centered>
         { this.renderItems() }
+        <Card>
+          <Card.Content>
+            <Card.Header>
+              Add New Item
+            </Card.Header>
+          </Card.Content>
+          <Card.Content extra>
+          <Button as={Link} to={`${this.state.department.id}/item/new`} color='blue'>
+            New Item
+          </Button>
+          </Card.Content>
+        </Card>
         </Card.Group>
-        <Button 
-          color="black" 
-          onClick={this.props.history.goBack}
-        >
-          Back
-        </Button>
-        <Button onClick={() => this.deleteItem(this.state.department.id)} color='blue'>
-          Delete
-        </Button>
       </div>
     )
   }

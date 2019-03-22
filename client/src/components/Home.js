@@ -29,6 +29,7 @@ const Cool = styled.div`
   border-radius: 8px;
   box-shadow: 2px 2px 5px grey;
   background-color: #545454;
+  margin-top: 15px;
 `
 
 const HeadTitle = styled.h1`

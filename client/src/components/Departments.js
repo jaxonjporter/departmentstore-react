@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, } from "react-router-dom";
-import { Button, Card, Header, } from "semantic-ui-react";
+import { Button, Card, Header, Icon, Segment, } from "semantic-ui-react";
 import axios from "axios";
 
 class Departments extends React.Component {
-  state = { departments: [], };
+  state = { departments: [], edit: false, };
 
   componentDidMount() {
     axios.get("/api/departments")
@@ -13,12 +13,12 @@ class Departments extends React.Component {
       })
   }
 
-
+  
   renderDepartments = () => {
     const { departments, } = this.state;
-
+    
     if (departments.length <= 0)
-      return <h2>No Products</h2>
+    return <h2>No Products</h2>
     return departments.map( department => (
       <Card key={department.id}>
         <Card.Content>
@@ -28,19 +28,37 @@ class Departments extends React.Component {
           <Button as={Link} to={`/departments/${department.id}`} color='blue'>
             View
           </Button>
-
+          <Button icon color="red"
+            onClick={() => this.deleteItem(department.id) } 
+            style={{ marginLeft: "10px", }}>
+            <Icon name="trash" />
+          </Button>
+          <Button as={Link} to={`/departments/${department.id}/edit`} icon color="yellow"
+            style={{ marginLeft: "10px", }}>
+            <Icon name="edit" />
+          </Button>
         </Card.Content>
       </Card>
     ))
   }
 
+  
+  deleteItem = (id) => {
+    axios.delete(`api/departments/${id}`)
+    .then( res => {
+      const { departments, } = this.state;
+      this.setState({ departments: departments.filter( d => d.id !== id ), })
+  })
+}
   render() {
     return (
       <div>
-      <Header as="h1">Department</Header>
+        <Segment>
+          <Header as="h1">Department</Header>
+        </Segment>
       <br />
       <br />
-      <Card.Group>
+      <Card.Group centered>
         { this.renderDepartments() }
         <Card>
           <Card.Content>
